@@ -189,4 +189,4 @@ def main(page: ft.Page):
 
     page.add(board)
 
-ft.app(target=main, port = 8000)
+ft.app(target=main, view=ft.WEB_BROWSER)
