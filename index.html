@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0e1014">
+  <meta name="color-scheme" content="dark">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="3x3x3">
+  <meta name="description" content="3 en raya definitivo: juega contra un bot o con un amigo online.">
+  <title>3x3x3</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Crect width='30' height='30' rx='6' fill='%230e1014'/%3E%3Crect x='3' y='3' width='7' height='7' rx='1.5' fill='%23ef4444'/%3E%3Crect x='11.5' y='11.5' width='7' height='7' rx='1.5' fill='%233b82f6'/%3E%3Crect x='20' y='20' width='7' height='7' rx='1.5' fill='%23ef4444'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Menú principal -->
+  <section class="screen home" id="screen-home" hidden>
+    <div class="home-inner">
+      <svg class="logo" viewBox="0 0 30 30" aria-hidden="true">
+        <rect x="3" y="3" width="7" height="7" rx="1.5" fill="var(--red)"/>
+        <rect x="11.5" y="3" width="7" height="7" rx="1.5" fill="var(--cell-on)"/>
+        <rect x="20" y="3" width="7" height="7" rx="1.5" fill="var(--blue)"/>
+        <rect x="3" y="11.5" width="7" height="7" rx="1.5" fill="var(--cell-on)"/>
+        <rect x="11.5" y="11.5" width="7" height="7" rx="1.5" fill="var(--blue)"/>
+        <rect x="20" y="11.5" width="7" height="7" rx="1.5" fill="var(--cell-on)"/>
+        <rect x="3" y="20" width="7" height="7" rx="1.5" fill="var(--blue)"/>
+        <rect x="11.5" y="20" width="7" height="7" rx="1.5" fill="var(--cell-on)"/>
+        <rect x="20" y="20" width="7" height="7" rx="1.5" fill="var(--red)"/>
+      </svg>
+      <h1 class="home-title">3x3x3</h1>
+      <p class="tagline">El 3 en raya de los 3 en raya</p>
+
+      <nav class="menu" aria-label="Modos de juego">
+        <button class="menu-item" id="menu-bot" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="8" width="16" height="12" rx="3"/><path d="M12 4v4M9 13h.01M15 13h.01M9.5 17h5"/></svg>
+          <span><b>Contra el bot</b><small>Cuatro niveles, de fácil a experto</small></span>
+        </button>
+        <button class="menu-item" id="menu-online" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0 1 12 0"/><circle cx="17" cy="9" r="2.5"/><path d="M16 14.2A5 5 0 0 1 21 19"/></svg>
+          <span><b>Con un amigo</b><small>Crea una sala y comparte el enlace</small></span>
+        </button>
+        <button class="menu-item" id="menu-local" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/></svg>
+          <span><b>En este móvil</b><small>Dos jugadores en el mismo dispositivo</small></span>
+        </button>
+      </nav>
+
+      <button class="link-btn" id="menu-help" type="button">Cómo jugar</button>
+    </div>
+  </section>
+
+  <!-- Partida -->
+  <section class="screen game" id="screen-game" hidden>
+    <header class="top">
+      <div class="brand">
+        <button class="icon-btn" id="btn-back" type="button" aria-label="Volver al menú">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <div class="title">
+          <h1>3x3x3</h1>
+          <span class="game-label" id="game-label"></span>
+        </div>
+        <div class="score" aria-label="Tableros ganados">
+          <span class="score-item red"><i class="dot"></i><span class="who" id="who-red">Rojo</span><b id="score-red">0</b></span>
+          <span class="score-item blue"><i class="dot"></i><span class="who" id="who-blue">Azul</span><b id="score-blue">0</b></span>
+        </div>
+      </div>
+      <div class="status" id="status" role="status" aria-live="polite">
+        <span class="status-dot"></span>
+        <div class="status-text">
+          <strong id="status-title"></strong>
+          <span id="status-hint"></span>
+        </div>
+      </div>
+    </header>
+
+    <main class="stage">
+      <div class="board" id="board" role="group" aria-label="Tablero"></div>
+
+      <div class="share-card" id="share-card" hidden>
+        <p class="share-label">Código de la sala</p>
+        <p class="share-code" id="share-code"></p>
+        <p class="share-hint">Envía el enlace a tu amigo. La partida empieza cuando entre.</p>
+        <button class="btn btn-primary" id="btn-share" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>
+          Compartir enlace
+        </button>
+        <button class="btn" id="btn-copy-code" type="button">Copiar código</button>
+      </div>
+    </main>
+
+    <footer class="controls">
+      <button class="btn" id="btn-undo" type="button" disabled>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg>
+        Deshacer
+      </button>
+      <button class="btn" id="btn-invite" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>
+        Invitar
+      </button>
+      <button class="btn btn-primary" id="btn-new" type="button">Nueva partida</button>
+      <button class="btn btn-primary" id="btn-rematch" type="button" disabled>Revancha</button>
+      <button class="btn btn-icon" id="btn-help" type="button" aria-label="Cómo jugar">?</button>
+    </footer>
+  </section>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <!-- Configurar partida contra el bot -->
+  <dialog id="dlg-bot" class="sheet">
+    <form method="dialog">
+      <h2 tabindex="-1" autofocus>Contra el bot</h2>
+      <fieldset class="field">
+        <legend>Dificultad</legend>
+        <div class="seg seg-4">
+          <label><input type="radio" name="level" value="facil"><span>Fácil</span></label>
+          <label><input type="radio" name="level" value="medio"><span>Medio</span></label>
+          <label><input type="radio" name="level" value="dificil" checked><span>Difícil</span></label>
+          <label><input type="radio" name="level" value="experto"><span>Experto</span></label>
+        </div>
+      </fieldset>
+      <fieldset class="field">
+        <legend>Tu color</legend>
+        <div class="seg">
+          <label><input type="radio" name="color" value="red" checked><span><i class="dot red"></i>Rojo</span></label>
+          <label><input type="radio" name="color" value="blue"><span><i class="dot blue"></i>Azul</span></label>
+          <label><input type="radio" name="color" value="random"><span>Al azar</span></label>
+        </div>
+        <p class="field-note">Rojo siempre empieza.</p>
+      </fieldset>
+      <fieldset class="field">
+        <legend>Reglas</legend>
+        <div class="seg">
+          <label><input type="radio" name="mode" value="original" checked><span>Original</span></label>
+          <label><input type="radio" name="mode" value="classic"><span>Clásico</span></label>
+        </div>
+        <p class="field-note" data-mode-note></p>
+      </fieldset>
+      <div class="sheet-actions">
+        <button class="btn" value="cancel" type="submit">Cancelar</button>
+        <button class="btn btn-primary" value="start" type="submit">Empezar</button>
+      </div>
+      <button class="btn btn-ghost" value="resume" type="submit" data-resume hidden>Continuar la partida guardada</button>
+    </form>
+  </dialog>
+
+  <!-- Jugar con un amigo online -->
+  <dialog id="dlg-online" class="sheet">
+    <form method="dialog" id="form-create">
+      <h2 tabindex="-1" autofocus>Con un amigo</h2>
+      <fieldset class="field">
+        <legend>Crear sala</legend>
+        <div class="seg">
+          <label><input type="radio" name="mode" value="original" checked><span>Original</span></label>
+          <label><input type="radio" name="mode" value="classic"><span>Clásico</span></label>
+        </div>
+        <p class="field-note" data-mode-note></p>
+      </fieldset>
+      <button class="btn btn-primary" value="create" type="submit">Crear sala</button>
+    </form>
+    <div class="divider"><span>o</span></div>
+    <form method="dialog" id="form-join">
+      <fieldset class="field">
+        <legend>Unirse con un código</legend>
+        <div class="join-row">
+          <input class="code-input" id="join-code" name="code" type="text" inputmode="text" autocomplete="off"
+                 autocapitalize="characters" spellcheck="false" maxlength="8" placeholder="ABC234" aria-label="Código de la sala">
+          <button class="btn" value="join" type="submit">Unirse</button>
+        </div>
+        <p class="field-note error" id="join-error" hidden>El código tiene 6 letras o números.</p>
+      </fieldset>
+    </form>
+    <form method="dialog" class="sheet-footer">
+      <button class="btn btn-ghost" value="cancel" type="submit">Cancelar</button>
+    </form>
+  </dialog>
+
+  <!-- Partida en el mismo móvil -->
+  <dialog id="dlg-local" class="sheet">
+    <form method="dialog">
+      <h2 tabindex="-1" autofocus>En este móvil</h2>
+      <fieldset class="field">
+        <legend>Reglas</legend>
+        <div class="seg">
+          <label><input type="radio" name="mode" value="original" checked><span>Original</span></label>
+          <label><input type="radio" name="mode" value="classic"><span>Clásico</span></label>
+        </div>
+        <p class="field-note" data-mode-note></p>
+      </fieldset>
+      <div class="sheet-actions">
+        <button class="btn" value="cancel" type="submit">Cancelar</button>
+        <button class="btn btn-primary" value="start" type="submit">Empezar</button>
+      </div>
+      <button class="btn btn-ghost" value="resume" type="submit" data-resume hidden>Continuar la partida guardada</button>
+    </form>
+  </dialog>
+
+  <dialog id="dlg-help" class="sheet">
+    <form method="dialog">
+      <h2 tabindex="-1" autofocus>Cómo jugar</h2>
+      <ol class="rules">
+        <li>Hay 9 tableros de 3 en raya dentro de un tablero grande. Empieza <span class="tag red">Rojo</span> y puede jugar en cualquier casilla.</li>
+        <li>La casilla que eliges decide dónde juega el rival: si juegas en la esquina superior derecha de un tablero, el rival juega en el tablero de la esquina superior derecha.</li>
+        <li>Haz 3 en raya en un tablero pequeño para ganarlo.</li>
+        <li>Gana la partida quien consiga <b>3 tableros en raya</b>.</li>
+        <li>Si te envían a un tablero lleno, puedes jugar en cualquier tablero.</li>
+      </ol>
+      <p class="muted">En modo <b>Original</b> los tableros ganados siguen abiertos. En modo <b>Clásico</b> se cierran y, si te envían a uno, juegas donde quieras.</p>
+      <div class="sheet-actions">
+        <button class="btn btn-primary" type="submit">Entendido</button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="js/logic.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/bot.js"></script>
+  <script src="js/online.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
